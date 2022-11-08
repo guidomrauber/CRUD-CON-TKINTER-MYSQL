@@ -1,28 +1,79 @@
+from io import BufferedIOBase
 from tkinter import *
 from tkinter import ttk
-
+from countries import *
 
     
 
 class Ventana(Frame):
-       
+    
+    paises = Countries()
+    
     def __init__(self, master=None):
         super().__init__(master,width=680, height=260)
         self.master = master
         self.pack()
         self.create_widgets()
+        self.llenaDatos()
+        self.habilitarCajas("disabled")  
+        self.habilitarBtnOper("normal")
+        self.habilitarBtnGuardar("disabled")
+            
+    def habilitarCajas(self,estado):
+        self.txtISO3.configure(state=estado)
+        self.txtCapital.configure(state=estado)
+        self.txtCurrency.configure(state=estado)
+        self.txtName.configure(state=estado)
         
+    def habilitarBtnOper(self,estado):
+        self.btnNuevo.configure(state=estado)                
+        self.btnModificar.configure(state=estado)
+        self.btnEliminar.configure(state=estado)
+        
+    def habilitarBtnGuardar(self,estado):
+        self.btnGuardar.configure(state=estado)                
+        self.btnCancelar.configure(state=estado)                
+        
+    def limpiarCajas(self):
+        self.txtCapital.delete(0,END)
+        self.txtCurrency.delete(0,END)
+        self.txtISO3.delete(0,END)
+        self.txtName.delete(0,END)
+        
+    def limpiaGrid(self):
+        for item in self.grid.get_children():
+            self.grid.delete(item)
+        
+        
+    def llenaDatos(self):
+        datos = self.paises.consulta_paises()        
+        for row in datos:            
+            self.grid.insert("",END,text=row[0], values=(row[1],row[2], row[3],row[4]))
+
     def fNuevo(self):         
-        pass
+        self.habilitarCajas("normal")  
+        self.habilitarBtnOper("disabled")
+        self.habilitarBtnGuardar("normal")
+        self.limpiarCajas()        
+        self.txtISO3.focus()
     
     def fGuardar(self):        
-        pass
-                 
+        self.paises.inserta_pais(self.txtISO3.get(),self.txtName.get(),self.txtCapital.get(),self.txtCurrency.get())
+        self.limpiaGrid()
+        self.llenaDatos()  
+        self.habilitarBtnGuardar("disabled")      
+        self.habilitarBtnOper("normal")
+        self.habilitarCajas("disabled")
+            
+        
+        
     def fModificar(self):        
         pass
     
     def fEliminar(self):
         pass
+    
+    
 
     def fCancelar(self):
         pass
